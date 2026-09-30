@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Mendoza Family</title>
+  <meta name="description" content="The Mendoza family home page.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!--
+    ============================================================
+    MENDOZA-PH.COM — FAMILY LANDING PAGE
+    ============================================================
+    Everything inside <div class="scene"> is positioned on top of
+    the family room picture. Positions are set in script.js (see
+    the CONFIG section at the top of that file), measured in
+    pixels of the ORIGINAL 1536 x 1024 picture, so you never have
+    to guess percentages yourself.
+
+    Files:
+      index.html  – the page structure (this file)
+      style.css   – colours, sizes, animations
+      script.js   – the cat's brain, toys, and click behaviour
+      images/     – all pictures
+  -->
+
+  <!-- A tiny SVG filter that makes drawn edges look furry (used by the
+       cat's tail and paws). Invisible by itself. -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="furEdge" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </svg>
+
+  <main class="stage">
+    <div class="scene" id="scene">
+
+      <!-- 1. The room picture (with the floor toys digitally lifted off
+              so they can move — see README.md). -->
+      <img class="scene-bg" src="images/family-room-scene.webp"
+           alt="The Mendoza family: Michael, our two children and Andrea, in the cat room at home">
+
+      <!-- 2. Floor toys. They start exactly where they are in the
+              original picture. Created by script.js from CONFIG.toys. -->
+      <div class="toys" id="toys"></div>
+
+      <!-- 3. The water bowl (drawn with SVG so it needs no extra photo). -->
+      <div class="water-bowl" id="waterBowl" aria-hidden="true">
+        <svg viewBox="0 0 100 50">
+          <ellipse cx="50" cy="40" rx="46" ry="9" fill="rgba(60,40,20,.18)"/>
+          <path d="M6 20 Q10 44 50 44 Q90 44 94 20 Z" fill="#f4efe6"/>
+          <path d="M6 20 Q10 44 50 44 Q90 44 94 20" fill="none" stroke="#d8cfc0" stroke-width="1.5"/>
+          <path d="M20 31 Q50 40 80 31" fill="none" stroke="#7fa8b8" stroke-width="3" opacity=".55"/>
+          <ellipse cx="50" cy="20" rx="44" ry="9" fill="#e9e2d6"/>
+          <ellipse class="water" cx="50" cy="21" rx="37" ry="6.5" fill="#9cc6d8"/>
+          <ellipse class="ripple" cx="58" cy="21" rx="6" ry="1.6" fill="none" stroke="#fff" stroke-width="1"/>
+        </svg>
+      </div>
+
+      <!-- 4. THE CAT. script.js moves this element around.
+              Layers (back to front): shadow, tail, legs, body, head.
+              The body and head are the SAME photo of our cat; the head
+              copy is faded around the face so it can tilt on its own. -->
+      <div class="cat" id="cat" role="button" tabindex="0" aria-label="Our cat (click me… if you dare)">
+        <div class="cat-shadow"></div>
+        <div class="cat-inner">          <!-- flips left/right -->
+          <div class="cat-pose">         <!-- squashes/stretches for poses -->
+            <svg class="cat-tail" viewBox="0 0 70 100" aria-hidden="true">
+              <defs>
+                <linearGradient id="tailFur" x1="0" y1="1" x2="1" y2="0">
+                  <stop offset="0" stop-color="#4a4644"/>
+                  <stop offset="1" stop-color="#6e6866"/>
+                </linearGradient>
+              </defs>
+              <!-- the tail: lies along the floor and curls up at the tip -->
+              <g filter="url(#furEdge)">
+                <path d="M66 86 C 46 94, 22 94, 12 82 C 5 73, 6 62, 14 55"
+                      fill="none" stroke="url(#tailFur)" stroke-width="20" stroke-linecap="round"/>
+              </g>
+            </svg>
+            <div class="cat-legs" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+            <img class="cat-body" src="images/cat-sprite.png" alt="" draggable="false">
+            <div class="cat-head">
+              <img src="images/cat-sprite.png" alt="" draggable="false">
+              <span class="eyelid left"></span>
+              <span class="eyelid right"></span>
+            </div>
+            <div class="cat-swipe-paw" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="cat-bubble" id="catBubble" aria-live="polite"></div>
+        <div class="cat-zzz" aria-hidden="true"><span>z</span><span>z</span><span>Z</span></div>
+      </div>
+
+      <!-- 5. The four family photo cards = four invisible buttons laid
+              exactly over the photos in the picture. Their sizes and
+              positions come from CONFIG.cards in script.js.
+              (script.js also adds a copy of each card ON TOP of the cat,
+              so the cat can walk "behind" the photos.) -->
+      <button class="hotspot" id="michaelPhoto" data-card="michael" aria-label="Michael"></button>
+      <button class="hotspot" id="child1Photo"  data-card="child1"  aria-label="Family photo"></button>
+      <button class="hotspot" id="child2Photo"  data-card="child2"  aria-label="Family photo"></button>
+      <button class="hotspot" id="andreaPhoto"  data-card="andrea"  aria-label="Andrea"></button>
+    </div>
+
+    <p class="hint">Psst… the cat is watching you.</p>
+  </main>
+
+  <!-- Full-screen layer used ONLY for the "cat scratches your screen" gag.
+       It is purely visual and disappears on its own. -->
+  <div class="scratch-layer" id="scratchLayer" aria-hidden="true"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

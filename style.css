@@ -1,0 +1,535 @@
+/* ==========================================================
+   MENDOZA-PH.COM — LANDING PAGE STYLES
+   ----------------------------------------------------------
+   Sections:
+     1. Page & background
+     2. The scene (the family room picture)
+     3. Family photo cards (hotspots, hover glow)
+     4. Toys & water bowl
+     5. The cat (layers, poses, eyelids, tail…)
+     6. Speech bubble & sleeping "Zzz"
+     7. Screen-scratch effect
+     8. Small screens
+   Most SIZES and POSITIONS are set in script.js (CONFIG), because
+   they are measured in pixels of the original picture.
+   ========================================================== */
+
+/* ---------- 1. Page & background ---------- */
+:root {
+  --page-bg: #efe6d8;          /* warm beige behind everything      */
+  --text: #5b4a3a;             /* hint text colour                  */
+  --glow: rgba(255, 244, 220, .95);  /* photo hover glow            */
+  --bubble-bg: #fffdf8;
+  --bubble-text: #3d3129;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--page-bg);
+  font-family: "Georgia", "Times New Roman", serif;
+  color: var(--text);
+}
+
+/* A soft, blurred copy of the room fills the space around the scene */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -40px;
+  background: url("images/family-room-scene.webp") center / cover no-repeat;
+  filter: blur(28px) saturate(1.1) brightness(1.05);
+  opacity: .55;
+  z-index: -1;
+}
+
+.stage {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  gap: 10px;
+}
+
+/* ---------- 2. The scene ---------- */
+.scene {
+  position: relative;
+  /* As big as possible while keeping the picture's 3:2 shape */
+  width: min(100%, calc((100svh - 70px) * 1.5));
+  aspect-ratio: 1536 / 1024;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(60, 40, 20, .28), 0 2px 8px rgba(60, 40, 20, .18);
+  container-type: inline-size;   /* lets text scale with the scene (cqw units) */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.scene-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.hint {
+  margin: 0;
+  font-style: italic;
+  font-size: 15px;
+  opacity: .75;
+  text-align: center;
+}
+
+/* Everything placed on the picture is absolutely positioned by script.js */
+.toy, .water-bowl, .cat, .hotspot, .card-face, .card-ring {
+  position: absolute;
+}
+
+/* ---------- 3. Family photo cards ---------- */
+
+/* Invisible clickable area over each photo (including the head above it) */
+.hotspot {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  border-radius: 30px 30px 3cqw 3cqw;
+  z-index: 858;
+}
+.hotspot:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+/* A copy of each card drawn above the cat, so the cat can hide behind it.
+   It looks identical to the picture underneath, so you never notice it. */
+.card-face {
+  inset: 0;
+  background: url("images/family-room-scene.webp") 0 0 / 100% 100% no-repeat;
+  pointer-events: none;
+  z-index: 857;
+}
+
+/* Soft glow around a photo when the mouse is over it */
+.card-ring {
+  pointer-events: none;
+  border-radius: 2.2cqw;
+  z-index: 859;
+  opacity: 0;
+  box-shadow: 0 0 0 2px var(--glow), 0 0 22px 4px rgba(255, 236, 200, .75);
+  transition: opacity .25s ease;
+}
+.card-ring.is-hover { opacity: 1; }
+.card-ring.pulse { animation: card-pulse .5s ease-out; }
+@keyframes card-pulse {
+  0%   { opacity: 1; box-shadow: 0 0 0 2px var(--glow), 0 0 10px 2px rgba(255,236,200,.9); }
+  100% { opacity: 0; box-shadow: 0 0 0 10px rgba(255,244,220,0), 0 0 40px 10px rgba(255,236,200,0); }
+}
+
+/* ---------- 4. Toys & water bowl ---------- */
+.toy {
+  cursor: pointer;
+  translate: -50% -50%;          /* the toy's x/y is its centre */
+  rotate: var(--rot, 0deg);
+  filter: drop-shadow(0 1px 1px rgba(60, 40, 20, .25));
+}
+.toy img { display: block; width: 100%; height: 100%; pointer-events: none; }
+.toy.wobble { animation: toy-wobble .5s ease-in-out; }
+@keyframes toy-wobble {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-9deg); }
+  60% { transform: rotate(6deg); }
+}
+
+.water-bowl { translate: -50% -100%; pointer-events: none; }
+.water-bowl svg { display: block; width: 100%; height: auto; overflow: visible; }
+.water-bowl .ripple { opacity: 0; transform-origin: 58px 21px; }
+.water-bowl.lapping .ripple { animation: ripple .55s ease-out infinite; }
+@keyframes ripple {
+  0%   { opacity: .9; transform: scale(.4); }
+  100% { opacity: 0;  transform: scale(3.5); }
+}
+
+/* ---------- 5. The cat ---------- */
+/* .cat is positioned by its FEET (bottom-centre), see renderCat() in script.js */
+.cat {
+  aspect-ratio: 400 / 372;         /* shape of images/cat-sprite.png */
+  translate: -50% -100%;
+  cursor: pointer;
+  outline: none;
+  --lid: 0;                        /* 0 = eyes open, 1 = eyes closed  */
+}
+.cat:focus-visible .cat-shadow { box-shadow: 0 0 0 2px #fff; }
+
+.cat-shadow {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -5%;
+  height: 16%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(50, 35, 20, .45), rgba(50, 35, 20, 0) 70%);
+  transition: scale .5s ease, opacity .3s ease;
+}
+
+.cat-inner, .cat-pose { position: absolute; inset: 0; }
+
+/* Turning left/right = mirroring the photo */
+.cat-inner {
+  scale: var(--face, 1) 1;
+  transition: scale .25s ease;
+}
+
+/* Poses change the size/shape of .cat-pose; animations use "transform".
+   The filter warms up the photo so it matches the sunny room
+   (our cat's photo was taken in shade). Tweak or remove freely. */
+.cat-pose {
+  filter: brightness(1.28) contrast(.96) sepia(.12) saturate(1.05);
+  transform-origin: 50% 100%;
+  transition: scale .5s ease, translate .5s ease, rotate .5s ease;
+  animation: breathe 3.6s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%, 100% { transform: scale(1, 1); }
+  50%      { transform: scale(1.008, 1.018); }
+}
+
+.cat-body, .cat-head, .cat-head img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* The body copy hides only the middle of the face; the head copy shows the
+   whole face on top. Because the head's solid part is bigger than the hole,
+   no gap appears when the head tilts a little. (Big head movements would show
+   "double ears", so the poses below tilt the whole cat instead.) */
+.cat-body {
+  -webkit-mask-image: radial-gradient(ellipse 38% 32% at 66% 30%, transparent 30%, #000 58%);
+          mask-image: radial-gradient(ellipse 38% 32% at 66% 30%, transparent 30%, #000 58%);
+}
+.cat-head {
+  -webkit-mask-image: radial-gradient(ellipse 38% 32% at 66% 30%, #000 72%, transparent 100%);
+          mask-image: radial-gradient(ellipse 38% 32% at 66% 30%, #000 72%, transparent 100%);
+  transform-origin: 64% 58%;
+  /* --head-* come from the pose (CSS); --look-* come from script.js */
+  rotate: calc(var(--head-rot, 0deg) + var(--look-rot, 0deg));
+  translate: 0 calc(var(--head-y, 0%) + var(--look-y, 0%));
+  scale: var(--head-sx, 1) var(--head-sy, 1);
+  transition: rotate .35s ease, translate .35s ease, scale .3s ease;
+}
+
+/* Eyelids: small patches of fur over each eye (for blinking/sleeping) */
+.eyelid {
+  position: absolute;
+  border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
+  transform-origin: 50% 0;
+  scale: 1 var(--lid);
+  transition: scale .12s ease;
+  border-bottom: 1px solid rgba(30, 24, 22, .75);
+}
+.eyelid.left  { left: 52%;   top: 30.3%; width: 9.2%; height: 7.6%; background: #7d7775; }
+.eyelid.right { left: 75%;   top: 31.8%; width: 8.8%; height: 6.4%; background: #5d5755; }
+
+/* Tail — drawn (not from the photo, because the tail isn't visible in it) */
+.cat-tail {
+  position: absolute;
+  left: -17%;
+  bottom: 4%;
+  width: 30%;
+  height: 36%;
+  transform-origin: 94% 86%;
+  rotate: 0deg;
+  transition: rotate .6s ease;
+  animation: tail-sway 5s ease-in-out infinite;
+  overflow: visible;
+}
+@keyframes tail-sway {
+  0%, 100% { transform: rotate(0deg); }
+  50%      { transform: rotate(6deg); }
+}
+
+/* Little legs that appear under the body when walking */
+.cat-legs {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: -9%;          /* the body lifts 8% when walking, so legs reach the floor */
+  height: 14%;
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+.cat-legs span {
+  position: absolute;
+  bottom: 0;
+  width: 13%;
+  height: 100%;
+  width: 11%;
+  border-radius: 40% 40% 50% 50%;
+  background: linear-gradient(#4d4947, #66605e);
+  filter: url(#furEdge);
+}
+.cat-legs span:nth-child(1) { left: 2%; }
+.cat-legs span:nth-child(2) { left: 26%; }
+.cat-legs span:nth-child(3) { left: 58%; }
+.cat-legs span:nth-child(4) { left: 82%; }
+
+/* Paw that swipes out (batting toys, swatting the visitor) */
+.cat-swipe-paw {
+  position: absolute;
+  right: -4%;
+  bottom: 8%;
+  width: 17%;
+  height: 13%;
+  border-radius: 55% 60% 50% 45%;
+  background: radial-gradient(circle at 40% 40%, #7b7573, #4f4a48);
+  filter: url(#furEdge);                          /* fuzzy fur edge */
+  opacity: 0;
+  transform-origin: 0% 60%;
+}
+
+/* ---- Poses (script.js puts ONE of these classes on .cat) ---- */
+
+.cat.walking .cat-pose { translate: 0 -8%; animation: walk-bob .44s ease-in-out infinite; }
+.cat.running .cat-pose { translate: 0 -8%; scale: 1.06 .96; animation: walk-bob .24s ease-in-out infinite; }
+.cat.walking .cat-legs, .cat.running .cat-legs { opacity: 1; }
+.cat.walking .cat-legs span, .cat.running .cat-legs span { animation: step .44s ease-in-out infinite; }
+.cat.running .cat-legs span { animation-duration: .24s; }
+.cat-legs span:nth-child(2), .cat-legs span:nth-child(3) { animation-delay: -.22s !important; }
+@keyframes walk-bob {
+  0%, 100% { transform: translateY(0) rotate(-1.2deg); }
+  50%      { transform: translateY(-3%) rotate(1.2deg); }
+}
+@keyframes step {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-35%); }
+}
+
+.cat.lying .cat-pose    { scale: 1.1 .84; translate: 0 2%; }
+.cat.lying .cat-tail    { rotate: -8deg; }
+
+.cat.sleeping           { --lid: 1; }
+.cat.sleeping .cat-pose { scale: 1.12 .8; translate: 0 3%; animation: sleep-breathe 3.4s ease-in-out infinite; }
+.cat.sleeping .cat-tail { rotate: -12deg; animation: none; }
+.cat.sleeping .cat-zzz  { opacity: 1; }
+@keyframes sleep-breathe {
+  0%, 100% { transform: scale(1, 1); }
+  50%      { transform: scale(1.015, 1.035); }
+}
+
+.cat.stretching .cat-pose { animation: stretch 2.2s ease-in-out; }
+@keyframes stretch {
+  0%, 100% { transform: scale(1, 1); }
+  35%, 60% { transform: scale(1.22, .82) translateX(4%); }
+}
+
+.cat.grooming           { --lid: .7; }
+.cat.grooming .cat-pose { rotate: 4deg; animation: groom .5s ease-in-out infinite; }
+.cat.grooming .cat-swipe-paw { opacity: 1; right: 16%; bottom: 30%; width: 14%; height: 11%; animation: groom-paw .5s ease-in-out infinite; }
+@keyframes groom {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50%      { transform: translateY(1.5%) rotate(2deg); }
+}
+@keyframes groom-paw {
+  0%, 100% { transform: translateY(0) rotate(-20deg); }
+  50%      { transform: translateY(-18%) rotate(-30deg); }
+}
+
+.cat.drinking           { --lid: .6; }
+.cat.drinking .cat-pose { scale: 1.04 .9; rotate: 9deg; translate: 3% 4%; animation: lap .38s ease-in-out infinite; }
+@keyframes lap {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(1.8%) rotate(1deg); }
+}
+
+.cat.sniffing .cat-head { animation: sniff .3s ease-in-out 4; }
+@keyframes sniff {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(2%, -1.5%); }
+}
+
+.cat.crouching .cat-pose { scale: 1.08 .86; }
+.cat.crouching .cat-pose { animation: butt-wiggle .18s ease-in-out infinite; }
+@keyframes butt-wiggle {
+  0%, 100% { transform: translateX(0); }
+  50%      { transform: translateX(-1.5%); }
+}
+
+.cat.scratching .cat-pose { scale: .96 1.14; animation: scratch-jitter .16s linear infinite; }
+.cat.scratching .cat-legs { opacity: 1; }
+.cat.scratching .cat-swipe-paw { opacity: 1; bottom: 38%; right: -9%; animation: scratch-paw .32s ease-in-out infinite; }
+@keyframes scratch-jitter {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-2%); }
+}
+@keyframes scratch-paw {
+  0%, 100% { transform: translateY(-40%) rotate(-10deg); }
+  50%      { transform: translateY(60%) rotate(10deg); }
+}
+
+.cat.alert .cat-pose { scale: .97 1.06; }
+
+.cat.angry              { --lid: .45; }
+.cat.angry .cat-pose    { scale: 1.02 1.05; animation: angry-shake .12s linear infinite; }
+.cat.angry .cat-tail    { animation: tail-lash .3s ease-in-out infinite; }
+@keyframes angry-shake {
+  0%, 100% { transform: translateX(0); }
+  50%      { transform: translateX(1.5%); }
+}
+
+/* ---- Short one-off effects (added for a moment, then removed) ---- */
+.cat.blink       { --lid: 1; }
+.cat.squint      { --lid: .5; }
+.cat.ears-back .cat-pose { scale: 1.04 .95; }   /* hunkered down — closest we can get to "ears back", see README */
+.cat.hop .cat-inner { animation: hop .35s ease-out; }
+@keyframes hop {
+  0%, 100% { transform: translateY(0); }
+  40%      { transform: translateY(-12%); }
+}
+.cat.twitch .cat-head { animation: twitch .25s ease-in-out 2; }
+@keyframes twitch {
+  0%, 100% { transform: rotate(0); }
+  50%      { transform: rotate(3deg) translateY(-1%); }
+}
+.cat.tail-flick .cat-tail { animation: tail-flick .45s ease-in-out 2; }
+.cat.tail-lash  .cat-tail { animation: tail-lash .3s ease-in-out infinite; }
+@keyframes tail-flick {
+  0%, 100% { transform: rotate(0); }
+  35%      { transform: rotate(-20deg); }
+  70%      { transform: rotate(14deg); }
+}
+@keyframes tail-lash {
+  0%, 100% { transform: rotate(-22deg); }
+  50%      { transform: rotate(20deg); }
+}
+.cat.swiping .cat-swipe-paw { animation: swipe .42s ease-out; }
+@keyframes swipe {
+  0%   { opacity: 0; transform: translate(-50%, 30%) scale(.5) rotate(25deg); }
+  35%  { opacity: 1; transform: translate(25%, -35%) scale(1) rotate(-25deg); }
+  70%  { opacity: 1; transform: translate(45%, 0%) scale(1) rotate(10deg); }
+  100% { opacity: 0; transform: translate(-30%, 20%) scale(.7) rotate(0deg); }
+}
+
+/* ---------- 6. Speech bubble & "Zzz" ---------- */
+.cat-bubble {
+  position: absolute;
+  left: 50%;
+  bottom: 104%;
+  translate: -50% 0;
+  padding: .35em .7em;
+  border-radius: 1em;
+  background: var(--bubble-bg);
+  color: var(--bubble-text);
+  font: 600 clamp(10px, 1.05cqw, 16px)/1.2 system-ui, -apple-system, "Segoe UI", sans-serif;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(40, 25, 10, .22);
+  opacity: 0;
+  scale: .6;
+  transform-origin: 50% 100%;
+  transition: opacity .2s ease, scale .2s ease;
+  pointer-events: none;
+}
+.cat-bubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  translate: -50% -1px;
+  border: .4em solid transparent;
+  border-top-color: var(--bubble-bg);
+}
+.cat-bubble.show { opacity: 1; scale: 1; }
+
+.cat-zzz {
+  position: absolute;
+  right: -2%;
+  top: -18%;
+  opacity: 0;
+  transition: opacity .5s ease;
+  pointer-events: none;
+  font: italic 700 clamp(9px, 1cqw, 15px)/1 Georgia, serif;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(40, 25, 10, .5);
+}
+.cat-zzz span { position: absolute; opacity: 0; animation: zzz 3s ease-out infinite; }
+.cat-zzz span:nth-child(2) { animation-delay: 1s; }
+.cat-zzz span:nth-child(3) { animation-delay: 2s; }
+@keyframes zzz {
+  0%   { opacity: 0; transform: translate(0, 0) scale(.6); }
+  20%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(120%, -220%) scale(1.3); }
+}
+
+/* ---------- 7. Screen-scratch effect ---------- */
+.scratch-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;   /* never blocks the page */
+  opacity: 1;
+  transition: opacity .9s ease;
+}
+.scratch-layer.fade { opacity: 0; }
+.scratch-layer svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+.claw-mark {
+  fill: none;
+  stroke-linecap: round;
+  stroke-dasharray: var(--len);
+  stroke-dashoffset: var(--len);
+  animation: claw-draw .2s ease-out forwards;
+  animation-delay: var(--delay);
+}
+.claw-mark.edge { stroke: rgba(255, 255, 255, .85); }
+.claw-mark.core { stroke: #2b1f1b; }
+.claw-mark.glint { stroke: rgba(255, 255, 255, .5); }
+@keyframes claw-draw { to { stroke-dashoffset: 0; } }
+
+.giant-paw {
+  position: absolute;
+  width: min(34vw, 300px);
+  aspect-ratio: 1;
+  animation: giant-swipe .38s cubic-bezier(.5, 0, .7, 1) forwards;
+}
+@keyframes giant-swipe {
+  0%   { opacity: 0; transform: translate(var(--x0), var(--y0)) rotate(-30deg) scale(.9); }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--x1), var(--y1)) rotate(-30deg) scale(1); }
+}
+
+.stage.shake { animation: shake .4s ease-in-out; }
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-6px, 3px); }
+  40% { transform: translate(5px, -4px); }
+  60% { transform: translate(-4px, 2px); }
+  80% { transform: translate(3px, -1px); }
+}
+
+/* ---------- 8. Small screens ---------- */
+@media (max-width: 700px) {
+  .stage { padding: 12px; }
+  .scene { border-radius: 12px; }
+  .hint  { font-size: 13px; }
+}
+/* Portrait phones: let the scene use the full width */
+@media (orientation: portrait) {
+  .scene { width: 100%; }
+}
+
+/* Visitors who prefer less motion: calmer page, no screen shake */
+@media (prefers-reduced-motion: reduce) {
+  .stage.shake { animation: none; }
+  .cat-pose, .cat-tail { animation: none !important; }
+}
