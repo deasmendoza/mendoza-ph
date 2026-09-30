@@ -1,0 +1,74 @@
+{
+  "_about": "Cat animation asset library for mendoza-ph.com. NOT used by the landing page yet. Add one entry per new clip. Times are in seconds.",
+  "format": "MP4 (H.264 video + audio track), 1280x720, 24 fps, 10.0 s, 240 frames",
+  "source": "Google Flow",
+  "animations": [
+    {
+      "name": "Cat_Walking",
+      "file": "videos/cat-walking.mp4",
+      "preview": "previews/cat-walking.jpg",
+      "original_upload": "Cat_walking_slowly_across_floor_20260930134155.mp4",
+      "added": "2026-09-30",
+      "behaviour": "Adult long-haired grey cat walking naturally on four legs, slowly, across a wooden floor.",
+      "segments": [
+        { "from": 0.0, "to": 7.0, "action": "walking, three-quarter side view" },
+        { "from": 7.0, "to": 10.0, "action": "turns toward the camera and stops, standing" }
+      ],
+      "intended_use": "Moving the cat from one spot in the room to another (wandering, crossing the foreground, walking to a toy, bowl, bed or photo).",
+      "ready_for_integration": "Catalogued. Needs background removal first",
+      "integration_notes": "The camera follows the cat, and the clip is filmed in a different room (grey sofa, wooden floor). The cat has to be cut out (transparent video or image sequence) before it can walk inside our room."
+    },
+    {
+      "name": "Cat_Sitting",
+      "file": "videos/cat-sitting.mp4",
+      "preview": "previews/cat-sitting.jpg",
+      "original_upload": "Cat_walking_and_sitting_down_20260930134614.mp4",
+      "added": "2026-09-30",
+      "behaviour": "Adult cat walking, stopping and sitting down naturally, ending seated and facing the viewer.",
+      "segments": [
+        { "from": 0.0, "to": 5.5, "action": "walking (almost identical to the start of Cat_Walking)" },
+        { "from": 5.5, "to": 8.0, "action": "stops and lowers into a sit" },
+        { "from": 8.0, "to": 10.0, "action": "sitting, facing the viewer" }
+      ],
+      "intended_use": "Transition from walking to sitting, and the seated idle pose, including 'staring at the viewer' at the end.",
+      "ready_for_integration": "Catalogued. Needs background removal first",
+      "integration_notes": "Same room and moving camera as Cat_Walking. Useful segment for the sit is about 5.5 to 10 s."
+    },
+    {
+      "name": "Cat_Scratching",
+      "file": "videos/cat-scratching.mp4",
+      "preview": "previews/cat-scratching.jpg",
+      "original_upload": "Cat_scratching_cat_furniture_720p_20260930135319.mp4",
+      "added": "2026-09-30",
+      "behaviour": "Adult cat walking to a sisal scratching post, standing up on its back legs and scratching it, then sitting down beside it.",
+      "segments": [
+        { "from": 0.0, "to": 2.5, "action": "walking toward the post" },
+        { "from": 2.5, "to": 4.0, "action": "sits at the base of the post" },
+        { "from": 4.0, "to": 8.5, "action": "stretches up and scratches the post with the front paws" },
+        { "from": 8.5, "to": 10.0, "action": "drops back down and sits beside the post" }
+      ],
+      "intended_use": "Scratching the cat tower or scratching post in the room.",
+      "ready_for_integration": "Catalogued. Needs background removal first",
+      "integration_notes": "The clip includes its own scratching post, which would need to line up with a post in our room or be kept in the cut-out. The camera moves."
+    },
+    {
+      "name": "Cat_Playing",
+      "file": "videos/cat-playing.mp4",
+      "preview": "previews/cat-playing.jpg",
+      "original_upload": "Cat_playing_with_toy_720p_20260930135402.mp4",
+      "added": "2026-09-30",
+      "behaviour": "Adult cat playing with a small yellow ball: pawing it, following it, crouching, rolling onto its side to bat it, then sitting up.",
+      "segments": [
+        { "from": 0.0, "to": 1.0, "action": "sitting next to the ball" },
+        { "from": 1.0, "to": 3.5, "action": "stands and paws the ball" },
+        { "from": 3.5, "to": 5.5, "action": "walks after the ball" },
+        { "from": 5.5, "to": 7.5, "action": "crouches and bats the ball" },
+        { "from": 7.5, "to": 9.0, "action": "lies on its side batting the ball" },
+        { "from": 9.0, "to": 10.0, "action": "sits up facing the viewer" }
+      ],
+      "intended_use": "Playing with a floor toy.",
+      "ready_for_integration": "Catalogued. Needs background removal first",
+      "integration_notes": "The toy is a yellow ball, which isn't one of the toys in our room. It would need to stay in the cut-out, or our toy would need to follow its path. The camera moves."
+    }
+  ]
+}
